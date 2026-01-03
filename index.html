@@ -2,18 +2,75 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>台日海外 IT 職涯計算器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台日海外 IT 職涯計算機</title>
     <style>
-        /* CSS：美化介面，展現你對 UI/UX 的基本要求 */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 50px; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 350px; }
-        h2 { color: #2c3e50; text-align: center; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #666; font-size: 14px; }
-        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        button:hover { background-color: #2980b9; }
-        .result { margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 6px; color: #2c3e50; }
+        /* CSS：基礎樣式 */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f0f4f8; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; /* 垂直置中 */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 400px; /* 電腦上不超過 400px，手機上自動撐滿 */
+        }
+
+        h2 { color: #1a365d; text-align: center; margin-top: 0; }
+        
+        .input-group { margin-bottom: 20px; }
+        
+        label { display: block; margin-bottom: 8px; color: #4a5568; font-weight: bold; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 8px; 
+            box-sizing: border-box; /* 防止寬度爆出去 */
+            font-size: 16px; /* 預防 iPhone 點擊時自動縮放 */
+        }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: #3182ce; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        button:hover { background-color: #2b6cb0; }
+
+        .result { 
+            margin-top: 25px; 
+            padding: 15px; 
+            background: #ebf8ff; 
+            border-radius: 8px; 
+            color: #2c5282; 
+        }
+
+        /* 針對手機的小調整 (Media Query) */
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .card { padding: 1.5rem; }
+            h2 { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -31,35 +88,26 @@
         <input type="number" id="rateInput" value="0.21" step="0.01">
     </div>
 
-    <button onclick="calculate()">立即計算 (實拿預估)</button>
+    <button onclick="calculate()">立即計算</button>
 
-    <div id="resultArea" class="result" style="display: none;">
-        <p>帳面年薪：<span id="grossTwd"></span> TWD</p>
-        <p><strong>預估實拿 (扣除20%稅費)：</strong></p>
-        <h3 id="netTwd" style="color: #e74c3c;"></h3>
+    <div class="result" id="resultArea" style="display:none;">
+        <p><strong>帳面年薪：</strong> <span id="twGross">0</span> TWD</p>
+        <p><strong>預估實拿 (扣稅約20%)：</strong> <br>
+           <span id="twNet" style="font-size: 1.5rem; font-weight: bold; color: #d32f2f;">0</span> TWD</p>
     </div>
 </div>
 
 <script>
-    // JavaScript：邏輯核心，C# 小白看這裡
     function calculate() {
-        // 1. 抓取輸入框的值 (類似 C# 的 int.Parse(Console.ReadLine()))
         const jpy = document.getElementById('jpyInput').value;
         const rate = document.getElementById('rateInput').value;
-
-        // 2. 商業邏輯運算
-        const grossTwd = jpy * rate;
-        const netTwd = grossTwd * 0.8; // 扣除 20% 社會保險與稅
-
-        // 3. 將結果塞回網頁 (DOM 操作)
-        document.getElementById('grossTwd').innerText = Math.round(grossTwd).toLocaleString();
-        document.getElementById('netTwd').innerText = Math.round(netTwd).toLocaleString() + " TWD";
         
-        // 顯示結果區塊
-        document.getElementById('resultArea').style.display = 'block';
+        const gross = Math.round(jpy * rate);
+        const net = Math.round(gross * 0.8); // 扣除稅與保險
 
-        // 專業主審加分：在 Console 印出偵錯資訊，這也是面試會問的調試技巧
-        console.log("計算完畢: JPY " + jpy + " 換算實拿為 TWD " + netTwd);
+        document.getElementById('twGross').innerText = gross.toLocaleString();
+        document.getElementById('twNet').innerText = net.toLocaleString();
+        document.getElementById('resultArea').style.display = 'block';
     }
 </script>
 
